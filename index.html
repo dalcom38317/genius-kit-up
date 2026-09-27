@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>지니어스 키트 기능 UP! - 마이크로비트 코드 업그레이드</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts (Noto Sans KR & JetBrains Mono) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans KR"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    button, .card-press {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    button:active, .card-press:active {
+      transform: scale(0.985);
+    }
+    /* 타겟 코드 강조용 하이라이트 스타일 */
+    .code-highlight-box {
+      border: 3px dashed #f59e0b;
+      background-color: rgba(245, 158, 11, 0.12);
+      border-radius: 0.75rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col antialiased">
+
+  <!-- ========================================================================= -->
+  <!-- [상단 헤더 & 단계 표시바] 5학년 눈높이 단계 네비게이션 -->
+  <!-- ========================================================================= -->
+  <header class="bg-white border-b-2 border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-4xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
+      <!-- 로고 & 타이틀 -->
+      <button onclick="goToStep(1)" class="flex items-center gap-2 text-left" title="처음으로">
+        <span class="text-2xl sm:text-3xl">🚀</span>
+        <span class="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+          지니어스 키트 <span class="text-blue-600">기능 UP!</span>
+        </span>
+      </button>
+
+      <!-- 3단계 진행 표시기 -->
+      <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-extrabold">
+        <div id="step-badge-1" class="px-3 py-1.5 rounded-xl bg-blue-600 text-white flex items-center gap-1">
+          <span>1</span><span class="hidden sm:inline">.작품 선택</span>
+        </div>
+        <span class="text-slate-300 font-black">›</span>
+        <div id="step-badge-2" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-400 flex items-center gap-1">
+          <span>2</span><span class="hidden sm:inline">.기능 선택</span>
+        </div>
+        <span class="text-slate-300 font-black">›</span>
+        <div id="step-badge-3" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-400 flex items-center gap-1">
+          <span>3</span><span class="hidden sm:inline">.코드 업그레이드</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨텐츠 영역 -->
+  <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-5 sm:py-8 flex flex-col justify-between">
+
+    <!-- ========================================================================= -->
+    <!-- [화면 1] 작품 선택: 설명 최소화, 4개 프로젝트 카드가 시원하게 노출 -->
+    <!-- ========================================================================= -->
+    <section id="screen-1" class="block w-full">
+      <div class="mb-5 text-center sm:text-left">
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900">어떤 작품을 만들고 있나요?</h2>
+        <p class="text-slate-500 font-bold text-base sm:text-lg mt-1">내가 만들고 있는 작품 카드를 콕 눌러주세요.</p>
+      </div>
+
+      <!-- 4개 프로젝트 카드 그리드 -->
+      <div id="project-card-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+        <!-- JS로 동적 렌더링 -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- [화면 2] 기능 선택: 최대 3개의 쉬운 기능 카드, 별표 난이도 포함 -->
+    <!-- ========================================================================= -->
+    <section id="screen-2" class="hidden w-full">
+      <div class="mb-5">
+        <div class="inline-flex items-center gap-2 bg-white border border-slate-200 px-3.5 py-1.5 rounded-xl text-slate-700 font-bold text-sm mb-2 shadow-xs">
+          <span>선택한 작품:</span>
+          <span id="screen2-selected-title" class="text-blue-600 font-black"></span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900">어떤 기능을 더해볼까요?</h2>
+        <p class="text-slate-500 font-bold text-base mt-1">추가하고 싶은 기능을 하나 골라보세요. (최대 3개)</p>
+      </div>
+
+      <!-- 3개 기능 카드 목록 -->
+      <div id="feature-card-container" class="space-y-4">
+        <!-- JS로 동적 렌더링 -->
+      </div>
+
+      <!-- 화면 2 하단 이동 버튼 -->
+      <div class="mt-8 pt-5 border-t-2 border-slate-200">
+        <button onclick="goToStep(1)" class="w-full sm:w-auto px-6 py-4 rounded-2xl bg-white border-2 border-slate-200 hover:bg-slate-100 text-slate-700 font-black text-base sm:text-lg flex items-center justify-center gap-2 shadow-xs">
+          <span class="text-xl">◀</span> 이전으로 (작품 다시 고르기)
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- [화면 3] 기능 코드 업그레이드 (7단계 필수 구조) -->
+    <!-- ========================================================================= -->
+    <section id="screen-3" class="hidden w-full space-y-6">
+
+      <!-- 상단 작품 이름 & 기능 타이틀 헤더 -->
+      <div class="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 shadow-xs">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+          <div class="flex items-center gap-2 text-sm font-bold text-blue-600">
+            <span id="screen3-proj-title">작품 이름</span>
+            <span>›</span>
+            <span>기능 업그레이드</span>
+          </div>
+          <div id="screen3-difficulty-badge" class="px-3 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-900">
+            <!-- 난이도 별표 -->
+          </div>
+        </div>
+        <h2 id="screen3-feature-title" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          기능 이름
+        </h2>
+        <p id="screen3-feature-summary" class="text-slate-600 font-bold text-base mt-2">
+          <!-- 기능 요약 설명 -->
+        </p>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- 1. "기존 코드를 준비해요" -->
+      <!-- ===================================================================== -->
+      <div class="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 space-y-3 shadow-xs">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-2xl bg-blue-600 text-white font-black flex items-center justify-center text-sm shadow-xs">1</span>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900">기존 코드를 준비해요</h3>
+        </div>
+        <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 sm:p-5 flex items-start gap-3">
+          <span class="text-2xl sm:text-3xl">💻</span>
+          <div class="space-y-1">
+            <p class="text-base sm:text-lg font-black text-blue-900">
+              이전 시간에 완성했던 <span id="screen3-ready-proj-name" class="underline decoration-blue-500 underline-offset-4"></span> 기본 코드를 열어주세요!
+            </p>
+            <p class="text-slate-700 font-bold text-sm sm:text-base">
+              마이크로비트 MakeCode의 파이썬(Python) 편집 창에 기존 코드가 그대로 켜져 있어야 해요.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- 2. "이 부분을 찾아요" (기존 코드 전체 중 타겟 위치 시각적 강조) -->
+      <!-- ===================================================================== -->
+      <div class="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 space-y-3 shadow-xs">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-2xl bg-amber-500 text-white font-black flex items-center justify-center text-sm shadow-xs">2</span>
+            <h3 class="text-xl sm:text-2xl font-black text-slate-900">이 부분을 찾아요</h3>
+          </div>
+          <span class="text-xs sm:text-sm font-black text-amber-700 bg-amber-100 px-3 py-1 rounded-xl">
+            👀 노란색 강조 상자를 찾아보세요
+          </span>
+        </div>
+        
+        <p id="screen3-target-guide" class="text-slate-700 font-bold text-sm sm:text-base">
+          <!-- 위치 찾기 힌트 문구 -->
+        </p>
+
+        <!-- 기존 코드 뷰어 (타겟 위치가 노란색 박스로 강조됨) -->
+        <div class="rounded-2xl bg-slate-900 border-2 border-slate-800 p-4 sm:p-5 overflow-hidden">
+          <div class="text-xs font-mono text-slate-400 mb-2 pb-2 border-b border-slate-800 flex justify-between">
+            <span>[기존 코드] 수정하거나 추가할 자리를 확인하세요</span>
+            <span>MakeCode Python</span>
+          </div>
+          <div id="screen3-base-code-container" class="font-mono font-bold text-sm sm:text-base leading-relaxed text-slate-300 space-y-1 overflow-x-auto whitespace-pre">
+            <!-- JS로 줄별 렌더링 & 하이라이트 박스 주입 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- 3. "이렇게 바꿔요" (추가하기/바꾸기 전용 코드 조각 & 복사 버튼) -->
+      <!-- ===================================================================== -->
+      <div class="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 space-y-3 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-2xl bg-emerald-600 text-white font-black flex items-center justify-center text-sm shadow-xs">3</span>
+            <h3 class="text-xl sm:text-2xl font-black text-slate-900">이렇게 바꿔요</h3>
+            <span id="screen3-action-badge" class="px-3 py-1 rounded-xl font-black text-xs sm:text-sm text-white">
+              <!-- "➕ 추가하기" 또는 "🔄 바꾸기" -->
+            </span>
+          </div>
+
+          <!-- 조각 코드 복사 버튼 (전체 복사 방지) -->
+          <button id="copy-diff-btn" onclick="copySnippetCode()" class="w-full sm:w-auto px-5 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm sm:text-base rounded-2xl shadow-sm flex items-center justify-center gap-2 active:bg-emerald-800">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
+            </svg>
+            <span id="copy-btn-text">이 코드만 복사하기</span>
+          </button>
+        </div>
+
+        <p id="screen3-action-description" class="text-slate-700 font-bold text-sm sm:text-base">
+          <!-- 추가/교체 방법 설명 문구 -->
+        </p>
+
+        <!-- 교체/추가할 코드 조각 박스 -->
+        <div class="rounded-2xl bg-slate-950 border-2 border-emerald-500/50 p-4 sm:p-5">
+          <div class="text-xs font-mono text-emerald-400 mb-2 pb-2 border-b border-slate-800 flex justify-between font-black">
+            <span id="screen3-diff-label">새로 넣을 코드 조각</span>
+            <span>Python</span>
+          </div>
+          <pre id="screen3-diff-code-display" class="font-mono font-black text-sm sm:text-base leading-relaxed text-emerald-300 whitespace-pre-wrap break-words">
+# 추가/바꿀 코드가 여기에 표시됩니다
+          </pre>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- 4. "바뀐 모습을 확인해요" (변경 후 최종 모양 미리보기) -->
+      <!-- ===================================================================== -->
+      <div class="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 space-y-3 shadow-xs">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-2xl bg-indigo-600 text-white font-black flex items-center justify-center text-sm shadow-xs">4</span>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900">바뀐 모습을 확인해요</h3>
+        </div>
+        <p class="text-slate-700 font-bold text-sm sm:text-base">
+          내 MakeCode 화면의 코드가 아래 모양처럼 바뀌었는지 확인해보세요.
+        </p>
+
+        <div class="rounded-2xl bg-slate-900 border-2 border-indigo-400/40 p-4 sm:p-5">
+          <div class="text-xs font-mono text-indigo-300 mb-2 pb-2 border-b border-slate-800 flex justify-between">
+            <span>[완성된 모습] 내 코드와 똑같은지 비교해보세요</span>
+            <span>Check View</span>
+          </div>
+          <pre id="screen3-preview-code-display" class="font-mono font-bold text-sm sm:text-base leading-relaxed text-cyan-300 whitespace-pre-wrap break-words">
+# 변경 후 코드가 여기에 표시됩니다
+          </pre>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- 5. "실행해요" & 6. "성공!" -->
+      <!-- ===================================================================== -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- 5. 실행해요 -->
+        <div class="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 space-y-3 shadow-xs">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-2xl bg-slate-900 text-white font-black flex items-center justify-center text-sm shadow-xs">5</span>
+            <h4 class="text-xl font-black text-slate-900">실행해요</h4>
+          </div>
+          <ol id="screen3-run-steps" class="space-y-2 text-sm sm:text-base font-bold text-slate-700 pl-1">
+            <!-- 단계별 실행 안내 -->
+          </ol>
+        </div>
+
+        <!-- 6. 성공! -->
+        <div class="bg-emerald-50 border-2 border-emerald-300 rounded-3xl p-5 sm:p-6 space-y-3 shadow-xs">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-2xl bg-emerald-600 text-white font-black flex items-center justify-center text-sm shadow-xs">6</span>
+            <h4 class="text-xl font-black text-emerald-950">성공!</h4>
+          </div>
+          <p id="screen3-success-result" class="text-base sm:text-lg font-black text-emerald-900 leading-relaxed">
+            <!-- 성공 시 결과 설명 -->
+          </p>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- 7. "더 해보기" (숫자 하나 바꿔보기 미션) -->
+      <!-- ===================================================================== -->
+      <div class="bg-amber-50 border-2 border-amber-300 rounded-3xl p-5 sm:p-6 space-y-2 shadow-xs">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-2xl bg-amber-500 text-white font-black flex items-center justify-center text-sm shadow-xs">7</span>
+          <h4 class="text-xl font-black text-amber-950">더 해보기 (숫자 하나를 바꿔보세요!)</h4>
+        </div>
+        <p id="screen3-challenge" class="text-slate-800 text-sm sm:text-base font-bold leading-relaxed pt-1">
+          <!-- 숫자 바꾸기 챌린지 -->
+        </p>
+      </div>
+
+      <!-- 하단 내비게이션 바 ("이전으로"와 "다음 기능 해보기") -->
+      <div class="pt-4 border-t-2 border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <button onclick="goToStep(2)" class="w-full sm:w-auto px-6 py-4 rounded-2xl bg-white border-2 border-slate-200 hover:bg-slate-100 text-slate-800 font-black text-base sm:text-lg flex items-center justify-center gap-2 shadow-xs">
+          <span class="text-xl">◀</span> 이전으로 (기능 목록)
+        </button>
+        
+        <button onclick="goToNextFeature()" id="btn-next-feature" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-base sm:text-lg flex items-center justify-center gap-2 shadow-sm">
+          <span>다음 기능 해보기</span> <span class="text-xl">▶</span>
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- 쉬운 알림 토스트 (alert 대신 모던 팝업) -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-3.5 rounded-2xl font-black text-sm shadow-2xl flex items-center gap-2 transition-all duration-200 opacity-0 pointer-events-none translate-y-3 z-50">
+    <span class="text-emerald-400 text-lg">✓</span>
+    <span id="toast-text">코드가 복사되었습니다!</span>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs font-bold text-slate-400">
+    초등 5학년 micro:bit &amp; Sensor:Edge 코드 업그레이드 | 지니어스 키트 기능 UP!
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- [선생님 전용 데이터 구조] -->
+  <!-- 선생님께서 추후 기본 코드 및 기능별 추가/교체 코드를 그대로 입력하실 수 있는 공간입니다. -->
+  <!-- ========================================================================= -->
+  <script>
+    /**
+     * 프로젝트 및 기능 업그레이드 데이터 스키마
+     * 
+     * 각 프로젝트(project) 구성:
+     * - id: 프로젝트 고유 ID
+     * - title: 프로젝트 이름
+     * - icon: 아이콘
+     * - pinsSummary: 사용 핀 요약
+     * - baseCode: [선생님 제공 예정] 이전 차시에서 학생들이 완성한 기본 코드 전체
+     * 
+     * 각 기능(feature) 구성:
+     * - id: 기능 고유 ID
+     * - title: 기능 이름
+     * - difficulty: 별표 난이도 ('★☆☆', '★★☆', '★★★')
+     * - summary: 기능의 짧은 설명
+     * - targetGuide: "이 부분을 찾아요"에서 학생에게 줄 명확한 위치 찾기 힌트
+     * - targetLineRange: [시작줄, 끝줄] (기본 코드에서 노란색 박스로 강조할 줄 번호, 1부터 시작)
+     * - actionType: "ADD" (추가하기) 또는 "REPLACE" (바꾸기)
+     * - actionDescription: 추가/바꾸기 작업에 대한 초등 5학년 맞춤형 설명
+     * - diffCode: [선생님 제공 예정] 새롭게 추가하거나 교체할 '코드 조각'만 작성
+     * - previewCode: [선생님 제공 예정] 변경 후 해당 영역(또는 전체)의 완성된 모습
+     * - runSteps: "실행해요" 학생 센서/버튼 조작 단계 리스트
+     * - successResult: "성공!" 정상 작동 시 결과 설명
+     * - challenge: "더 해보기" 학생이 스스로 바꿔볼 수 있는 숫자 도전
+     */
+    const PROJECT_LESSONS_DATA = [
+      {
+        id: "streetlamp",
+        title: "자동 LED 가로등",
+        icon: "💡",
+        pinsSummary: "광센서(P1) / LED(P16)",
+        // [확정 기본 코드] 자동 LED 가로등
+        baseCode: `# P16 : LED
+# P1 : 광센서
+
+def on_forever():
+    level = pins.analog_read_pin(AnalogPin.P1)
+    led.plot_bar_graph(level, 1023)
+
+    # 광센서는 밝으면 값이 크고, 어두우면 값이 작아요!
+    if level < 100:
+        pins.digital_write_pin(DigitalPin.P16, 1)
+    else:
+        pins.digital_write_pin(DigitalPin.P16, 0)
+
+basic.forever(on_forever)`,
+        features: [
+          {
+            id: "streetlamp_1",
+            title: "어두우면 아이콘도 보여줘요",
+            difficulty: "★☆☆",
+            summary: "LED가 켜질 때 micro:bit 화면에 아이콘도 나타나게 해요.",
+            targetGuide: "LED를 켜는 코드 <span class='bg-amber-100 px-1 py-0.5 rounded font-mono font-bold text-amber-900'>pins.digital_write_pin(DigitalPin.P16, 1)</span>를 찾아보세요.",
+            targetLineRange: [10, 10], // 기본 코드 10번째 줄 강조
+            actionType: "ADD",
+            actionDescription: "LED를 켜는 코드 바로 아래에 아이콘 코드를 <span class='text-emerald-600 font-black'>추가해요</span>.",
+            diffCode: `basic.show_icon(IconNames.HEART)`,
+            previewCode: `if level < 100:
+    pins.digital_write_pin(DigitalPin.P16, 1)
+    basic.show_icon(IconNames.HEART)`,
+            runSteps: [
+              "광센서를 손으로 가려 어둡게 만들어보세요."
+            ],
+            successResult: "LED가 켜지고 micro:bit 화면에 하트가 나타나면 성공! ✅",
+            challenge: "하트 대신 내가 좋아하는 다른 아이콘으로 바꿔볼까요? 🚀"
+          },
+          {
+            id: "streetlamp_2",
+            title: "어두우면 소리도 나게 해요",
+            difficulty: "★☆☆",
+            summary: "LED가 켜질 때 micro:bit에서 소리도 나게 해요.",
+            targetGuide: "LED를 켜는 코드 <span class='bg-amber-100 px-1 py-0.5 rounded font-mono font-bold text-amber-900'>pins.digital_write_pin(DigitalPin.P16, 1)</span>를 찾아보세요.",
+            targetLineRange: [10, 10], // 기본 코드 10번째 줄 강조
+            actionType: "ADD",
+            actionDescription: "LED를 켜는 코드 바로 아래에 소리 코드를 <span class='text-emerald-600 font-black'>추가해요</span>.",
+            diffCode: `music.play_tone(262, music.beat(BeatFraction.QUARTER))`,
+            previewCode: `if level < 100:
+    pins.digital_write_pin(DigitalPin.P16, 1)
+    music.play_tone(262, music.beat(BeatFraction.QUARTER))`,
+            runSteps: [
+              "광센서를 손으로 가려 어둡게 만들어보세요."
+            ],
+            successResult: "LED가 켜지고 소리가 나면 성공! ✅",
+            challenge: "다른 음으로 바꾸면 어떤 소리가 날까요? (숫자 262를 다른 숫자로 바꿔보세요!) 🚀"
+          },
+          {
+            id: "streetlamp_3",
+            title: "어두우면 LED가 깜빡여요",
+            difficulty: "★★☆",
+            summary: "LED가 계속 켜져 있는 대신 깜빡이게 해요.",
+            targetGuide: "LED를 켜는 코드 <span class='bg-amber-100 px-1 py-0.5 rounded font-mono font-bold text-amber-900'>pins.digital_write_pin(DigitalPin.P16, 1)</span>를 찾아보세요.",
+            targetLineRange: [10, 10], // 기본 코드 10번째 줄 강조
+            actionType: "REPLACE",
+            actionDescription: "LED를 켜는 한 줄을 위의 네 줄로 <span class='text-blue-600 font-black'>바꿔주세요</span>.",
+            diffCode: `pins.digital_write_pin(DigitalPin.P16, 1)
+basic.pause(500)
+pins.digital_write_pin(DigitalPin.P16, 0)
+basic.pause(500)`,
+            previewCode: `if level < 100:
+    pins.digital_write_pin(DigitalPin.P16, 1)
+    basic.pause(500)
+    pins.digital_write_pin(DigitalPin.P16, 0)
+    basic.pause(500)
+else:
+    pins.digital_write_pin(DigitalPin.P16, 0)`,
+            runSteps: [
+              "광센서를 손으로 가려 어둡게 만들어보세요."
+            ],
+            successResult: "LED가 켜졌다 꺼졌다 반복하면 성공! ✅",
+            challenge: "500을 200으로 바꾸면 LED는 어떻게 달라질까요? 🚀"
+          }
+        ]
+      },
+      {
+        id: "smartfan",
+        title: "스마트 선풍기",
+        icon: "🌀",
+        pinsSummary: "TMP36 온도 센서(P1) / 선풍기 모듈(P2)",
+        // [확정 기본 코드] 스마트 선풍기
+        baseCode: `# 안정적인 전원을 공급하기 위해 다운로드 후에는 전원을 보드에 연결해 주세요.
+# P1 : 온도 센서
+# P2 : 모터
+
+def read_temp():
+    value = pins.analog_read_pin(AnalogPin.P1)
+    mv = Math.map(value, 0, 1023, 0, 3300)
+    return (mv - 500) / 10
+
+def fan_on():
+    pins.analog_write_pin(AnalogPin.P2, 512)
+
+def fan_off():
+    pins.analog_write_pin(AnalogPin.P2, 0)
+
+def on_forever():
+    temp = read_temp()
+    basic.show_number(Math.round_with_precision(temp, 1))
+
+    if temp > 29.5:
+        fan_on()
+    else:
+        fan_off()
+
+fan_off()
+basic.forever(on_forever)`,
+        features: [
+          {
+            id: "smartfan_1",
+            title: "선풍기가 켜지면 아이콘도 보여줘요",
+            difficulty: "★☆☆",
+            summary: "선풍기가 돌아갈 때 micro:bit 화면에 아이콘도 나타나게 해요.",
+            targetGuide: "29.5도보다 높으면 선풍기를 켜는 부분을 찾아보세요.",
+            targetLineRange: [20, 21], // 20~21번째 줄: if temp > 29.5: fan_on()
+            actionType: "ADD",
+            actionDescription: "fan_on() 바로 아래에 아이콘 코드를 한 줄 <span class='text-emerald-600 font-black'>추가해요</span>.",
+            diffCode: `basic.show_icon(IconNames.HAPPY)`,
+            previewCode: `if temp > 29.5:
+    fan_on()
+    basic.show_icon(IconNames.HAPPY)
+else:
+    fan_off()`,
+            runSteps: [
+              "온도 센서를 따뜻하게 해보세요."
+            ],
+            successResult: "29.5도보다 높아졌을 때 선풍기가 돌아가고 아이콘이 나타나면 성공! ✅",
+            challenge: "다른 아이콘으로 바꾸면 어떤 모습이 나타날까요? 🚀"
+          },
+          {
+            id: "smartfan_2",
+            title: "선풍기가 켜지면 소리도 나요",
+            difficulty: "★☆☆",
+            summary: "선풍기가 돌아갈 때 micro:bit에서 소리도 나게 해요.",
+            targetGuide: "29.5도보다 높으면 선풍기를 켜는 부분을 찾아보세요.",
+            targetLineRange: [20, 21], // 20~21번째 줄: if temp > 29.5: fan_on()
+            actionType: "ADD",
+            actionDescription: "fan_on() 바로 아래에 소리 코드를 한 줄 <span class='text-emerald-600 font-black'>추가해요</span>.",
+            diffCode: `music.play_tone(262, music.beat(BeatFraction.QUARTER))`,
+            previewCode: `if temp > 29.5:
+    fan_on()
+    music.play_tone(262, music.beat(BeatFraction.QUARTER))
+else:
+    fan_off()`,
+            runSteps: [
+              "온도 센서를 따뜻하게 해 29.5도보다 높게 만들어보세요."
+            ],
+            successResult: "선풍기가 돌아가고 소리가 나면 성공! ✅",
+            challenge: "다른 음으로 바꾸면 어떤 소리가 날까요? (숫자 262를 다른 숫자로 바꿔보세요!) 🚀"
+          },
+          {
+            id: "smartfan_3",
+            title: "더 더우면 선풍기가 더 빠르게 돌아요",
+            difficulty: "★★☆",
+            summary: "온도가 더 높아지면 선풍기가 더 빠르게 돌아가게 해요.",
+            targetGuide: "온도에 따라 선풍기를 켜고 끄는 부분을 찾아보세요.",
+            targetLineRange: [20, 23], // 20~23번째 줄: if temp > 29.5: ... else: ...
+            actionType: "REPLACE",
+            actionDescription: `찾은 부분을 위의 코드로 <span class='text-blue-600 font-black'>바꿔주세요</span>.<br>
+            <div class='mt-2.5 p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs sm:text-sm text-blue-950 font-bold leading-relaxed'>
+              💡 <b>작동 원리 한눈에 보기</b><br>
+              • 29.5℃ 이하 ➔ 선풍기 꺼짐 (0)<br>
+              • 29.5℃ 초과 ➔ 선풍기 기본 속도 (512)<br>
+              • 32℃ 초과 ➔ 선풍기 고속 회전 (1023)
+            </div>`,
+            diffCode: `if temp > 32:
+    pins.analog_write_pin(AnalogPin.P2, 1023)
+elif temp > 29.5:
+    fan_on()
+else:
+    fan_off()`,
+            previewCode: `if temp > 32:
+    pins.analog_write_pin(AnalogPin.P2, 1023)
+elif temp > 29.5:
+    fan_on()
+else:
+    fan_off()`,
+            runSteps: [
+              "온도 센서를 따뜻하게 하면서 선풍기의 움직임을 확인해보세요."
+            ],
+            successResult: "온도가 더 높아졌을 때 선풍기가 더 빠르게 돌아가면 성공! ✅",
+            challenge: "32를 31로 바꾸면 언제 빠르게 돌아가기 시작할까요? 🚀"
+          }
+        ]
+      },
+      {
+        id: "smartpot",
+        title: "똑똑이 화분",
+        icon: "🌱",
+        pinsSummary: "토양습도 센서(P1) / OLED(I2C) / 내장 스피커",
+        // [확정 기본 코드] 똑똑이 화분
+        baseCode: `# P1 : 토양습도 센서
+# OLED : SCL·SDA 자리 (I2C)
+# OLED는 한글이 안 나와요. 영어와 숫자만 써요.
+# 확장 > oled-ssd1306 추가
+
+dry_value = 0        # 마른 상태에서 잰 값으로 바꿔요
+wet_value = 700      # 젖은 상태에서 잰 값으로 바꿔요
+threshold = 30       # 임계값. 이보다 마르면 물이 필요해요.
+
+OLED.init(128, 64)   # OLED 초기화
+
+def read_moisture():
+    # 센서 값을 0~100%로 바꿔요.
+    # 흙이 젖을수록 전기가 잘 통해서 값이 변해요.
+    value = pins.analog_read_pin(AnalogPin.P1)
+    serial.write_value("value", value)
+
+    # 마름~젖음 범위의 센서 값을 수분 0~100%로 바꿔요.
+    moisture = Math.map(value, dry_value, wet_value, 0, 100)
+
+    # 소수점은 반올림해요.
+    moisture = Math.round(moisture)
+
+    # 측정한 범위를 벗어나면 0% 또는 100%로 잘라요.
+    moisture = Math.constrain(moisture, 0, 100)
+
+    return moisture
+
+def show_moisture(moisture):
+    # OLED 화면을 지워요
+    OLED.clear()
+
+    # 제목을 쓰고 줄 바꿈을 해요.
+    OLED.write_string_new_line("My Plant")
+
+    # 글자는 write_string, 숫자는 write_num
+    OLED.write_string("Moisture: ")
+    OLED.write_num(moisture)
+    OLED.write_string(" %")
+
+def start_alarm():
+    # OLED 다음 줄에 물 달라는 말을 써요
+    OLED.new_line()
+    OLED.write_string("Water me!")
+
+    # 이미 소리가 나는 중이면 다시 재생하지 않아요.
+    if not music.is_sound_playing():
+        music._play_default_background(
+            music.built_in_playable_melody(
+                Melodies.WAWAWAWAA
+            ),
+            music.PlaybackMode.IN_BACKGROUND
+        )
+
+def stop_alarm():
+    music.stop_all_sounds()
+
+def on_forever():
+    moisture = read_moisture()
+    serial.write_value("moisture", moisture)
+
+    led.plot_bar_graph(moisture, 100)
+    show_moisture(moisture)
+
+    if moisture < threshold:
+        start_alarm()
+    else:
+        stop_alarm()
+
+    basic.pause(1000)
+
+basic.forever(on_forever)`,
+        features: [
+          {
+            id: "smartpot_1",
+            title: "화분의 기분을 얼굴로 보여줘요",
+            difficulty: "★☆☆",
+            summary: "흙이 마르면 슬픈 얼굴, 물이 충분하면 웃는 얼굴을 보여줘요.",
+            targetGuide: "물이 필요한지 확인하는 부분 <span class='bg-amber-100 px-1 py-0.5 rounded font-mono font-bold text-amber-900'>if moisture &lt; threshold: ... else: ...</span>을 찾아보세요.",
+            targetLineRange: [61, 64], // if moisture < threshold: start_alarm() else: stop_alarm()
+            actionType: "ADD",
+            actionDescription: `수분 상태에 맞게 얼굴 아이콘 코드를 각각 아래에 <span class='text-emerald-600 font-black'>추가해요</span>.<br>
+            <div class='mt-2.5 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs sm:text-sm text-emerald-950 font-bold leading-relaxed'>
+              💡 <b>화분의 기분 미리보기</b><br>
+              • 수분이 부족해요 ➔ 슬픈 얼굴 ☹ (basic.show_icon(IconNames.SAD))<br>
+              • 수분이 충분해요 ➔ 웃는 얼굴 🙂 (basic.show_icon(IconNames.HAPPY))
+            </div>`,
+            diffCode: `    if moisture < threshold:
+        start_alarm()
+        basic.show_icon(IconNames.SAD)
+    else:
+        stop_alarm()
+        basic.show_icon(IconNames.HAPPY)`,
+            previewCode: `    if moisture < threshold:
+        start_alarm()
+        basic.show_icon(IconNames.SAD)
+    else:
+        stop_alarm()
+        basic.show_icon(IconNames.HAPPY)`,
+            runSteps: [
+              "토양습도 센서를 마른 상태와 젖은 상태에서 각각 확인해보세요."
+            ],
+            successResult: "흙이 마르면 슬픈 얼굴, 물이 충분하면 웃는 얼굴이 나타나면 성공! ✅",
+            challenge: "다른 아이콘으로 바꾸면 화분의 기분을 어떻게 표현할 수 있을까요? 🚀"
+          },
+          {
+            id: "smartpot_2",
+            title: "OLED에 상태 메시지를 추가해요",
+            difficulty: "★☆☆",
+            summary: "물이 충분할 때 OLED에 \"I'm OK!\" 메시지가 나타나게 해요.",
+            targetGuide: "물이 충분할 때 알림을 멈추는 부분 <span class='bg-amber-100 px-1 py-0.5 rounded font-mono font-bold text-amber-900'>else: stop_alarm()</span>을 찾아보세요.",
+            targetLineRange: [63, 64], // else: stop_alarm()
+            actionType: "ADD",
+            actionDescription: `stop_alarm() 바로 아래에 OLED 메시지 코드를 두 줄 <span class='text-emerald-600 font-black'>추가해요</span>.<br>
+            <div class='mt-2.5 p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs sm:text-sm text-blue-950 font-bold leading-relaxed'>
+              💡 <b>OLED 상태 메시지</b><br>
+              • 물이 부족하면 ➔ Water me!<br>
+              • 물이 충분하면 ➔ I'm OK! (OLED는 한글이 안 나오므로 영어/숫자만 써요)
+            </div>`,
+            diffCode: `OLED.new_line()
+OLED.write_string("I'm OK!")`,
+            previewCode: `    if moisture < threshold:
+        start_alarm()
+    else:
+        stop_alarm()
+        OLED.new_line()
+        OLED.write_string("I'm OK!")`,
+            runSteps: [
+              "토양습도 센서를 촉촉한 상태로 만들어보세요."
+            ],
+            successResult: "OLED 화면에 I'm OK!가 나타나면 성공! ✅",
+            challenge: `"I'm OK!" 대신 내가 원하는 영어 메시지(예: GOOD!, HAPPY!, THANK YOU!)로 바꿔볼까요? 🚀`
+          },
+          {
+            id: "smartpot_3",
+            title: "A버튼을 누르면 수분값을 확인해요",
+            difficulty: "★★☆",
+            summary: "A버튼을 누르면 지금 화분의 수분값을 micro:bit 화면에서 확인해요.",
+            targetGuide: "코드 맨 아래에 있는 <span class='bg-amber-100 px-1 py-0.5 rounded font-mono font-bold text-amber-900'>basic.forever(on_forever)</span> 위치를 찾아보세요.",
+            targetLineRange: [69, 69], // basic.forever(on_forever) 줄 강조
+            actionType: "ADD",
+            actionDescription: `아래 코드를 <span class='bg-amber-100 px-1 py-0.5 rounded font-mono font-bold text-amber-900'>basic.forever(on_forever)</span> 바로 위에 <span class='text-emerald-600 font-black'>추가해요 ➕</span>.<br>
+            <div class='mt-2.5 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs sm:text-sm text-emerald-950 font-bold leading-relaxed'>
+              💡 <b>버튼 동작 원리</b><br>
+              • A버튼을 누르면 ➔ 토양습도 센서의 값을 읽어와요 (read_moisture)<br>
+              • 현재 수분값을 micro:bit 화면에 숫자로 보여줘요 (basic.show_number)
+            </div>`,
+            diffCode: `def on_button_pressed_a():
+    moisture = read_moisture()
+    basic.show_number(moisture)
+
+input.on_button_pressed(Button.A, on_button_pressed_a)`,
+            previewCode: `def on_button_pressed_a():
+    moisture = read_moisture()
+    basic.show_number(moisture)
+
+input.on_button_pressed(Button.A, on_button_pressed_a)
+
+basic.forever(on_forever)`,
+            runSteps: [
+              "A버튼을 눌러보세요."
+            ],
+            successResult: "micro:bit 화면에 현재 수분값이 숫자로 나타나면 성공! ✅",
+            challenge: "마른 상태와 젖은 상태에서 A버튼을 눌러 숫자를 비교해볼까요? 🚀"
+          }
+        ]
+      },
+      {
+        id: "smartblind",
+        title: "자동 블라인드",
+        icon: "🪟",
+        pinsSummary: "광센서(P1) / 서보모터(P2)",
+        // [확정 기본 코드] 자동 블라인드
+        baseCode: `# P1 : 광센서
+# P2 : 서보모터
+# 다운로드 후에는 USB 케이블을 확장 보드에 연결해 주세요. (서보모터 전원 공급)
+
+threshold = 300 # 임계값. 이 값보다 밝으면 커튼을 닫아요.
+
+def close_curtain():
+    pins.servo_write_pin(AnalogPin.P2, 0)
+
+def open_curtain():
+    pins.servo_write_pin(AnalogPin.P2, 90)
+
+def on_forever():
+    brightness = pins.analog_read_pin(AnalogPin.P1)
+    serial.write_value("brightness", brightness)
+
+    if brightness > threshold:
+        close_curtain()
+    else:
+        open_curtain()
+
+    basic.pause(500)
+
+close_curtain()
+basic.forever(on_forever)`,
+        features: [
+          {
+            id: "smartblind_1",
+            title: "블라인드 상태를 아이콘으로 보여줘요",
+            difficulty: "★☆☆",
+            summary: "블라인드가 닫히거나 열릴 때 micro:bit 화면의 아이콘도 바뀌게 해요.",
+            targetGuide: "밝기에 따라 블라인드를 열고 닫는 부분 <span class='bg-amber-100 px-1 py-0.5 rounded font-mono font-bold text-amber-900'>if brightness &gt; threshold: ... else: ...</span>을 찾아보세요.",
+            targetLineRange: [18, 21], // if brightness > threshold: close_curtain() else: open_curtain()
+            actionType: "ADD",
+            actionDescription: `블라인드 상태에 맞게 아이콘 코드를 각각 아래에 <span class='text-emerald-600 font-black'>추가해요</span>.<br>
+            <div class='mt-2.5 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs sm:text-sm text-emerald-950 font-bold leading-relaxed'>
+              💡 <b>블라인드 상태 미리보기</b><br>
+              • 밝아요 ➔ 블라인드 닫힘 ➔ ❌ 아이콘 (basic.show_icon(IconNames.NO))<br>
+              • 어두워요 ➔ 블라인드 열림 ➔ ✔ 아이콘 (basic.show_icon(IconNames.YES))
+            </div>`,
+            diffCode: `    if brightness > threshold:
+        close_curtain()
+        basic.show_icon(IconNames.NO)
+    else:
+        open_curtain()
+        basic.show_icon(IconNames.YES)`,
+            previewCode: `    if brightness > threshold:
+        close_curtain()
+        basic.show_icon(IconNames.NO)
+    else:
+        open_curtain()
+        basic.show_icon(IconNames.YES)`,
+            runSteps: [
+              "광센서에 빛을 비추었다가 손으로 가려보세요."
+            ],
+            successResult: "블라인드가 열리고 닫힐 때 micro:bit의 아이콘도 바뀌면 성공! ✅",
+            challenge: "YES와 NO 대신 내가 원하는 다른 아이콘으로 바꿔볼까요? 🚀"
+          },
+          {
+            id: "smartblind_2",
+            title: "블라인드가 닫히면 소리가 나요",
+            difficulty: "★☆☆",
+            summary: "밝아서 블라인드가 닫힐 때 소리도 나게 해요.",
+            targetGuide: "밝을 때 블라인드를 닫는 부분 <span class='bg-amber-100 px-1 py-0.5 rounded font-mono font-bold text-amber-900'>if brightness &gt; threshold: close_curtain()</span>을 찾아보세요.",
+            targetLineRange: [18, 19], // if brightness > threshold: close_curtain()
+            actionType: "ADD",
+            actionDescription: "close_curtain() 바로 아래에 소리 코드를 한 줄 <span class='text-emerald-600 font-black'>추가해요</span>.",
+            diffCode: `music.play_tone(262, music.beat(BeatFraction.QUARTER))`,
+            previewCode: `    if brightness > threshold:
+        close_curtain()
+        music.play_tone(262, music.beat(BeatFraction.QUARTER))
+    else:
+        open_curtain()`,
+            runSteps: [
+              "광센서에 빛을 비춰 밝게 만들어보세요."
+            ],
+            successResult: "블라인드가 닫히고 소리가 나면 성공! ✅",
+            challenge: "다른 음으로 바꾸면 어떤 소리가 날까요? (숫자 262를 다른 숫자로 바꿔보세요!) 🚀"
+          },
+          {
+            id: "smartblind_3",
+            title: "중간 밝기에서는 반만 열어요",
+            difficulty: "★★☆",
+            summary: "빛의 밝기에 따라 블라인드가 닫힘, 반만 열림, 열림으로 움직이게 해요.",
+            targetGuide: "밝기에 따라 블라인드를 열고 닫는 부분을 찾아보세요.",
+            targetLineRange: [18, 21], // if brightness > threshold: ... else: ...
+            actionType: "REPLACE",
+            actionDescription: `찾은 부분을 위의 코드로 <span class='text-blue-600 font-black'>바꿔주세요</span>.<br>
+            <div class='mt-2.5 p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs sm:text-sm text-blue-950 font-bold leading-relaxed'>
+              💡 <b>블라인드 움직임 한눈에 보기</b><br>
+              • ☀️ 아주 밝아요 (500 초과) ➔ 블라인드 닫기 (0°)<br>
+              • 🌤️ 중간 정도예요 (300 초과 500 이하) ➔ 반만 열기 (45°)<br>
+              • 🌙 어두워요 (300 이하) ➔ 블라인드 열기 (90°)
+            </div>`,
+            diffCode: `    if brightness > 500:
+        close_curtain()
+    elif brightness > 300:
+        pins.servo_write_pin(AnalogPin.P2, 45)
+    else:
+        open_curtain()`,
+            previewCode: `    if brightness > 500:
+        close_curtain()
+    elif brightness > 300:
+        pins.servo_write_pin(AnalogPin.P2, 45)
+    else:
+        open_curtain()`,
+            runSteps: [
+              "광센서에 비추는 빛의 밝기를 바꿔보세요."
+            ],
+            successResult: "빛의 밝기에 따라 블라인드가 닫힘, 반만 열림, 열림으로 움직이면 성공! ✅",
+            challenge: "45를 30이나 60으로 바꾸면 블라인드의 중간 위치는 어떻게 달라질까요? (숫자를 바꾸면 멈추는 위치가 달라져요) 🚀"
+          }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 애플리케이션 상태 관리 및 화면 렌더링 로직
+    // =========================================================================
+    let currentStep = 1;
+    let selectedProjectId = null;
+    let selectedFeatureIndex = 0;
+
+    /**
+     * [화면 1] 4개 프로젝트 카드 렌더링 (설명 없이 4개 카드가 바로 눈에 들어옴)
+     */
+    function renderProjectCards() {
+      const container = document.getElementById('project-card-container');
+      container.innerHTML = '';
+
+      PROJECT_LESSONS_DATA.forEach(proj => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = "card-press w-full text-left p-5 sm:p-6 rounded-3xl border-2 border-slate-200 hover:border-blue-600 bg-white shadow-xs flex flex-col justify-between transition-all focus:outline-none focus:ring-4 focus:ring-blue-100 min-h-[140px]";
+        
+        card.innerHTML = `
+          <div class="flex items-center gap-4 mb-3">
+            <span class="text-4xl sm:text-5xl filter drop-shadow-xs">${proj.icon}</span>
+            <div>
+              <span class="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-md">기본 프로젝트</span>
+              <h3 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">${proj.title}</h3>
+            </div>
+          </div>
+          
+          <div class="w-full mt-2 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div class="text-xs sm:text-sm font-bold text-slate-500">
+              📌 ${proj.pinsSummary}
+            </div>
+            <span class="px-3.5 py-2 bg-blue-600 text-white font-black text-xs sm:text-sm rounded-xl">
+              선택하기 →
+            </span>
+          </div>
+        `;
+
+        card.onclick = () => selectProject(proj.id);
+        container.appendChild(card);
+      });
+    }
+
+    /**
+     * 프로젝트 선택
+     */
+    function selectProject(projId) {
+      selectedProjectId = projId;
+      const proj = PROJECT_LESSONS_DATA.find(p => p.id === projId);
+      if (!proj) return;
+
+      document.getElementById('screen2-selected-title').innerText = `${proj.icon} ${proj.title}`;
+      renderFeatureCards(proj);
+      goToStep(2);
+    }
+
+    /**
+     * [화면 2] 최대 3개 기능 카드 렌더링 (난이도 별표 포함)
+     */
+    function renderFeatureCards(proj) {
+      const container = document.getElementById('feature-card-container');
+      container.innerHTML = '';
+
+      // 최대 3개만 노출
+      const featuresToShow = proj.features.slice(0, 3);
+
+      featuresToShow.forEach((feat, index) => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = "card-press w-full text-left p-5 sm:p-6 rounded-3xl border-2 border-slate-200 hover:border-emerald-500 bg-white shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all focus:outline-none focus:ring-4 focus:ring-emerald-100 min-h-[110px]";
+
+        card.innerHTML = `
+          <div class="flex-grow">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-black flex items-center justify-center">
+                0${index + 1}
+              </span>
+              <span class="text-xs font-extrabold text-slate-400">난이도</span>
+              <span class="text-amber-500 font-black text-sm tracking-wider">${feat.difficulty}</span>
+            </div>
+            <h4 class="text-xl sm:text-2xl font-black text-slate-900 leading-snug">
+              ${feat.title}
+            </h4>
+            <p class="text-slate-600 font-bold text-sm sm:text-base mt-1.5">
+              ${feat.summary}
+            </p>
+          </div>
+
+          <div class="flex-shrink-0">
+            <span class="inline-flex items-center justify-center w-full sm:w-auto px-5 py-3.5 bg-emerald-600 text-white font-black text-sm sm:text-base rounded-2xl shadow-xs">
+              업그레이드 시작 →
+            </span>
+          </div>
+        `;
+
+        card.onclick = () => selectFeature(index);
+        container.appendChild(card);
+      });
+    }
+
+    /**
+     * [화면 3] 기능 업그레이드 상세 렌더링 (7단계 필수 절차)
+     */
+    function selectFeature(featureIndex) {
+      selectedFeatureIndex = featureIndex;
+      const proj = PROJECT_LESSONS_DATA.find(p => p.id === selectedProjectId);
+      if (!proj) return;
+      const feat = proj.features[featureIndex];
+      if (!feat) return;
+
+      // 헤더 영역
+      document.getElementById('screen3-proj-title').innerText = `${proj.icon} ${proj.title}`;
+      document.getElementById('screen3-difficulty-badge').innerText = `난이도 ${feat.difficulty}`;
+      document.getElementById('screen3-feature-title').innerText = feat.title;
+      document.getElementById('screen3-feature-summary').innerText = feat.summary;
+
+      // 1. 기존 코드를 준비해요
+      document.getElementById('screen3-ready-proj-name').innerText = `[${proj.title}]`;
+
+      // 2. 이 부분을 찾아요
+      document.getElementById('screen3-target-guide').innerHTML = `👉 ${feat.targetGuide}`;
+      renderBaseCodeWithHighlight(proj.baseCode, feat.targetLineRange);
+
+      // 3. 이렇게 바꿔요
+      const actionBadge = document.getElementById('screen3-action-badge');
+      if (feat.actionType === "ADD") {
+        actionBadge.innerText = "➕ 추가하기";
+        actionBadge.className = "px-3 py-1 rounded-xl font-black text-xs sm:text-sm text-white bg-emerald-600";
+        document.getElementById('screen3-diff-label').innerText = "새로 끼워 넣을 코드 조각";
+      } else {
+        actionBadge.innerText = "🔄 바꾸기";
+        actionBadge.className = "px-3 py-1 rounded-xl font-black text-xs sm:text-sm text-white bg-blue-600";
+        document.getElementById('screen3-diff-label').innerText = "새로 교체할 코드 조각";
+      }
+      document.getElementById('screen3-action-description').innerHTML = feat.actionDescription;
+      document.getElementById('screen3-diff-code-display').innerText = feat.diffCode;
+
+      // 4. 바뀐 모습을 확인해요
+      document.getElementById('screen3-preview-code-display').innerText = feat.previewCode;
+
+      // 5. 실행해요
+      const stepsContainer = document.getElementById('screen3-run-steps');
+      stepsContainer.innerHTML = feat.runSteps.map((stepText, idx) => `
+        <li class="flex items-start gap-2.5">
+          <span class="w-6 h-6 rounded-full bg-slate-900 text-white font-black text-xs flex items-center justify-center flex-shrink-0 mt-0.5">${idx + 1}</span>
+          <span class="leading-relaxed">${stepText}</span>
+        </li>
+      `).join('');
+
+      // 6. 성공!
+      document.getElementById('screen3-success-result').innerText = feat.successResult;
+
+      // 7. 더 해보기
+      document.getElementById('screen3-challenge').innerHTML = feat.challenge;
+
+      // 하단 내비게이션 버튼 제어
+      const nextBtn = document.getElementById('btn-next-feature');
+      if (featureIndex >= proj.features.length - 1) {
+        nextBtn.innerHTML = `<span>다른 작품 만들기</span> <span class="text-xl">🏠</span>`;
+      } else {
+        nextBtn.innerHTML = `<span>다음 기능 해보기</span> <span class="text-xl">▶</span>`;
+      }
+
+      goToStep(3);
+    }
+
+    /**
+     * 2단계용: 기존 코드 전체에서 찾을 대상 줄(라인)을 시각적으로 강조 렌더링
+     */
+    function renderBaseCodeWithHighlight(baseCode, range) {
+      const container = document.getElementById('screen3-base-code-container');
+      container.innerHTML = '';
+
+      const lines = baseCode.split('\n');
+      const startLine = range[0];
+      const endLine = range[1];
+
+      lines.forEach((lineText, idx) => {
+        const lineNum = idx + 1;
+        const isTarget = lineNum >= startLine && lineNum <= endLine;
+
+        const row = document.createElement('div');
+        row.className = isTarget 
+          ? "flex items-start code-highlight-box p-1.5 text-amber-300 font-extrabold" 
+          : "flex items-start px-1.5 py-0.5 text-slate-300";
+
+        // 줄 번호 + 코드 본문
+        row.innerHTML = `
+          <span class="inline-block w-8 text-xs font-mono text-slate-500 select-none flex-shrink-0 text-right pr-2 pt-0.5">${lineNum}</span>
+          <span class="flex-grow whitespace-pre break-all">${escapeHtml(lineText || ' ')}</span>
+          ${isTarget ? '<span class="ml-2 text-xs bg-amber-400 text-slate-950 font-black px-1.5 py-0.5 rounded select-none flex-shrink-0">👈 이 자리!</span>' : ''}
+        `;
+
+        container.appendChild(row);
+      });
+    }
+
+    /**
+     * HTML 특수문자 이스케이프 유틸
+     */
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /**
+     * 화면 3에서 "다음 기능 해보기" 누를 때
+     */
+    function goToNextFeature() {
+      const proj = PROJECT_LESSONS_DATA.find(p => p.id === selectedProjectId);
+      if (!proj) return;
+
+      if (selectedFeatureIndex < proj.features.length - 1) {
+        selectFeature(selectedFeatureIndex + 1);
+      } else {
+        // 모든 기능을 완료했으면 1단계로 이동
+        goToStep(1);
+      }
+    }
+
+    /**
+     * 단계(화면) 전환
+     */
+    function goToStep(step) {
+      currentStep = step;
+
+      const s1 = document.getElementById('screen-1');
+      const s2 = document.getElementById('screen-2');
+      const s3 = document.getElementById('screen-3');
+
+      s1.classList.toggle('hidden', step !== 1);
+      s2.classList.toggle('hidden', step !== 2);
+      s3.classList.toggle('hidden', step !== 3);
+
+      // 상단 배지 동기화
+      const b1 = document.getElementById('step-badge-1');
+      const b2 = document.getElementById('step-badge-2');
+      const b3 = document.getElementById('step-badge-3');
+
+      b1.className = step === 1 ? "px-3 py-1.5 rounded-xl bg-blue-600 text-white flex items-center gap-1 shadow-xs" : "px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 cursor-pointer flex items-center gap-1";
+      if (step > 1) b1.onclick = () => goToStep(1); else b1.onclick = null;
+
+      b2.className = step === 2 ? "px-3 py-1.5 rounded-xl bg-blue-600 text-white flex items-center gap-1 shadow-xs" : (step > 2 ? "px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 cursor-pointer flex items-center gap-1" : "px-3 py-1.5 rounded-xl bg-slate-100 text-slate-400 flex items-center gap-1");
+      if (step > 2) b2.onclick = () => goToStep(2); else b2.onclick = null;
+
+      b3.className = step === 3 ? "px-3 py-1.5 rounded-xl bg-blue-600 text-white flex items-center gap-1 shadow-xs" : "px-3 py-1.5 rounded-xl bg-slate-100 text-slate-400 flex items-center gap-1";
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    /**
+     * 추가/교체할 조각 코드만 클립보드에 복사 (학생들이 전체 덮어쓰기 방지)
+     */
+    function copySnippetCode() {
+      const codeText = document.getElementById('screen3-diff-code-display').innerText;
+      let isCopied = false;
+
+      try {
+        const dummyArea = document.createElement("textarea");
+        dummyArea.value = codeText;
+        dummyArea.style.position = "fixed";
+        dummyArea.style.left = "-9999px";
+        document.body.appendChild(dummyArea);
+        dummyArea.focus();
+        dummyArea.select();
+        isCopied = document.execCommand('copy');
+        document.body.removeChild(dummyArea);
+      } catch (e) {
+        isCopied = false;
+      }
+
+      if (!isCopied && navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(codeText).then(() => {
+          triggerCopySuccess();
+        }).catch(() => {
+          showToast("코드를 손으로 길게 눌러 복사해주세요!");
+        });
+        return;
+      }
+
+      if (isCopied) {
+        triggerCopySuccess();
+      } else {
+        showToast("코드를 직접 선택하여 복사해주세요!");
+      }
+    }
+
+    function triggerCopySuccess() {
+      const btnText = document.getElementById('copy-btn-text');
+      const original = btnText.innerText;
+      btnText.innerText = "조각 복사 완료! ✓";
+      showToast("새 코드 조각이 복사되었어요! 안내된 자리에 붙여넣으세요.");
+      setTimeout(() => {
+        btnText.innerText = original;
+      }, 2000);
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toast-text');
+      text.innerText = msg;
+
+      if (toastTimer) clearTimeout(toastTimer);
+      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-3');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-3');
+      }, 2400);
+    }
+
+    // 앱 시작 시 1단계 렌더링
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProjectCards();
+      goToStep(1);
+    });
+  </script>
+</body>
+</html>
